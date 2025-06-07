@@ -16,6 +16,19 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "deploy": {
+      "dependsOn": ["^deploy"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars"]
+    },
+    "preview": {
+      "dependsOn": ["^preview"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars"]
+    },
+    "cf-typegen": {
+      "dependsOn": ["^cf-typegen"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars"],
+      "outputs": ["cloudflare-env.d.ts"]
     }
   }
 }
