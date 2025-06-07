@@ -1,5 +1,5 @@
 {
-  "name": "with-tailwind",
+  "name": "moveto-team",
   "private": true,
   "scripts": {
     "build": "turbo run build",

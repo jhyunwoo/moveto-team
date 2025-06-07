@@ -1,4 +1,8 @@
 import type { PlopTypes } from "@turbo/gen";
+import * as path from "path";
+import { execSync } from "child_process";
+
+const TEMPLATE_DIR = path.resolve(__dirname, "../../apps/template");
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   // create a generator
@@ -15,14 +19,34 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
     actions: [
       {
         type: "addMany",
-        // 복사된 파일이 들어갈 폴더 경로. projectName 값으로 새 폴더 생성
+        // 새로 생성될 프로젝트 폴더 (프로젝트 루트 기준)
         destination: "apps/{{projectName}}/",
-        // 기준 폴더(템플릿 파일이 있는 경로)
-        base: "apps/template",
-        // 템플릿으로 사용할 모든 파일
-        templateFiles: "apps/template/**",
-        // 동일 파일이 있을 때 덮어쓸지 여부
-        skipIfExists: false,
+        // 실제 템플릿이 있는 apps/template 디렉터리
+        base: TEMPLATE_DIR,
+        // 복사할 파일들
+        templateFiles: path.join(TEMPLATE_DIR, "**/*"),
+        globOptions: {
+          dot: true, // .gitignore, .next 등 dotfile 포함
+          ignore: ["**/.next/**", "**/.turbo/**", "**/node_modules/**"],
+        },
+      },
+      // 2) 복사 후 package.json 의 name 필드 수정
+      {
+        type: "modify",
+        path: "apps/{{projectName}}/package.json",
+        pattern: /"name"\s*:\s*".*"/,
+        template: `"name": "{{projectName}}"`,
+      },
+      // 복사 후 dependencies 설치
+      (answers: { projectName: string }) => {
+        const targetDir = path.resolve(
+          process.cwd(),
+          "apps",
+          answers.projectName,
+        );
+        console.log(`\n🛠 Installing dependencies in ${targetDir}...\n`);
+        execSync("pnpm install", { cwd: targetDir, stdio: "inherit" });
+        return "✅ Dependencies installed";
       },
     ],
   });
