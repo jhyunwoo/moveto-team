@@ -7,7 +7,7 @@
     "lint": "turbo run lint",
     "deploy": "turbo run deploy",
     "preview": "turbo run preview",
-    "cf-typegen": "trubo run cf-typegen",
+    "cf-typegen": "turbo nextjs-cf-template#cf-typegen",
     "check-types": "turbo run check-types",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
