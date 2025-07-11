@@ -2,16 +2,16 @@ import type { PlopTypes } from "@turbo/gen";
 import * as path from "path";
 import { execSync } from "child_process";
 
-const TEMPLATE_DIR = path.resolve(__dirname, "../../apps/template");
+const TEMPLATE_DIR = path.resolve(__dirname, "../../apps/next-template");
 const CF_TEMPLATE_DIR = path.resolve(
   __dirname,
-  "../../apps/nextjs-cf-template",
+  "../../apps/nextjs-cf-next-template",
 );
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   // create a generator
-  plop.setGenerator("create-app", {
-    description: "create new Next.js app with template",
+  plop.setGenerator("create-next", {
+    description: "create new Next.js app with next-template",
     // gather information from the user
     prompts: [
       {
@@ -25,7 +25,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         type: "addMany",
         // 새로 생성될 프로젝트 폴더 (프로젝트 루트 기준)
         destination: "apps/{{projectName}}/",
-        // 실제 템플릿이 있는 apps/template 디렉터리
+        // 실제 템플릿이 있는 apps/next-template 디렉터리
         base: TEMPLATE_DIR,
         // 복사할 파일들
         templateFiles: path.join(TEMPLATE_DIR, "**/*"),
@@ -56,7 +56,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   });
 
   plop.setGenerator("create-next-cf", {
-    description: "create new Next.js app with Cloudflare Workers template",
+    description: "create new Next.js app with Cloudflare Workers next-template",
     // gather information from the user
     prompts: [
       {
@@ -70,7 +70,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         type: "addMany",
         // 새로 생성될 프로젝트 폴더 (프로젝트 루트 기준)
         destination: "apps/{{projectName}}/",
-        // 실제 템플릿이 있는 apps/template 디렉터리
+        // 실제 템플릿이 있는 apps/next-template 디렉터리
         base: CF_TEMPLATE_DIR,
         // 복사할 파일들
         templateFiles: path.join(CF_TEMPLATE_DIR, "**/*"),
