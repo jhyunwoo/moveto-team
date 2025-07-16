@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1752663267480,
+      "tag": "0000_modern_prima",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1752665324563,
+      "tag": "0001_dry_guardsmen",
+      "breakpoints": true
+    }
+  ]
+}
