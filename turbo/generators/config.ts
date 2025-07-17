@@ -3,10 +3,7 @@ import * as path from "path";
 import { execSync } from "child_process";
 
 const TEMPLATE_DIR = path.resolve(__dirname, "../../apps/next-template");
-const CF_TEMPLATE_DIR = path.resolve(
-  __dirname,
-  "../../apps/next-cf-next-template",
-);
+const CF_TEMPLATE_DIR = path.resolve(__dirname, "../../apps/next-cf-template");
 const HONO_CF_TEMPLATE_DIR = path.resolve(
   __dirname,
   "../../apps/hono-cf-template",
