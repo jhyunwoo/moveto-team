@@ -5,7 +5,7 @@ import { execSync } from "child_process";
 const TEMPLATE_DIR = path.resolve(__dirname, "../../apps/next-template");
 const CF_TEMPLATE_DIR = path.resolve(
   __dirname,
-  "../../apps/nextjs-cf-next-template",
+  "../../apps/next-cf-next-template",
 );
 const HONO_CF_TEMPLATE_DIR = path.resolve(
   __dirname,
