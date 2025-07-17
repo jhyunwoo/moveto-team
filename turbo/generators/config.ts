@@ -137,7 +137,12 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         templateFiles: path.join(HONO_CF_TEMPLATE_DIR, "**/*"),
         globOptions: {
           dot: true, // .gitignore, .next 등 dotfile 포함
-          ignore: ["**/.wrangler/**", "**/.turbo/**", "**/node_modules/**"],
+          ignore: [
+            "**/.wrangler/**",
+            "**/.turbo/**",
+            "**/node_modules/**",
+            "**/applied_sql_files.txt",
+          ],
         },
       },
       // 2) 복사 후 package.json 의 name 필드 수정

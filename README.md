@@ -13,3 +13,8 @@ turbo gen create-next
 turbo gen create-next-cf
 ```
 
+#### Add Hono Project with Cloudflare Workers
+```bash
+turbo gen create-hono-cf
+```
+
