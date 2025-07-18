@@ -1,10 +1,24 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "hono-cf-template",
+  "name": "moveto-api",
   "main": "src/index.ts",
   "compatibility_date": "2025-07-16",
   "observability": {
     "enabled": true
+  },
+  "migrations": [
+    {
+      "new_sqlite_classes": ["Counter"],
+      "tag": "v1"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "Counter",
+        "name": "COUNTER"
+      }
+    ]
   },
   "d1_databases": [
     {
@@ -15,8 +29,14 @@
   ],
   "kv_namespaces": [
     {
-      "binding": "moveto_api",
+      "binding": "KV",
       "id": "db96a3c2aa964c7392aa86d3dcbbf5d0"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "api.moveto.kr",
+      "custom_domain": true
     }
   ]
 // "compatibility_flags": [

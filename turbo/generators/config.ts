@@ -149,6 +149,12 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         pattern: /"name"\s*:\s*".*"/,
         template: `"name": "{{projectName}}"`,
       },
+      {
+        type: "modify",
+        path: "apps/{{projectName}}/wrangler.jsonc",
+        pattern: /"name"\s*:\s*".*"/,
+        template: `"name": "{{projectName}}"`,
+      },
       // 복사 후 dependencies 설치
       (answers: { projectName: string }) => {
         const targetDir = path.resolve(

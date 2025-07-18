@@ -1,7 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import { Env } from "hono";
 
-export default class LogInCounter extends DurableObject {
+export class Counter extends DurableObject {
   // In-memory state
   value = 0;
 
