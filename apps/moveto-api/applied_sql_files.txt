@@ -6,3 +6,4 @@
 0005_bent_rocket_racer.sql
 0006_pretty_doorman.sql
 0007_skinny_namor.sql
+0008_cuddly_colonel_america.sql

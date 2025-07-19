@@ -57,6 +57,13 @@
       "when": 1752828329334,
       "tag": "0007_skinny_namor",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1752914614646,
+      "tag": "0008_cuddly_colonel_america",
+      "breakpoints": true
     }
   ]
 }

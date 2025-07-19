@@ -14,15 +14,12 @@
     "format": "prettier -w ."
   },
   "dependencies": {
-    "@node-rs/argon2": "^2.0.2",
-    "@oslojs/binary": "^1.0.0",
-    "@oslojs/crypto": "^1.0.1",
-    "@oslojs/encoding": "^1.1.0",
-    "arctic": "^3.7.0",
+    "@hono/zod-validator": "^0.7.2",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.44.3",
     "hono": "^4.8.5",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@types/node": "^24.0.14",

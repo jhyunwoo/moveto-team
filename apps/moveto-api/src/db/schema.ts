@@ -1,25 +1,19 @@
-import {
-  sqliteTable,
-  text,
-  integer,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-export const usersTable = sqliteTable(
-  "user",
-  {
-    id: text("id").primaryKey().notNull(),
-    githubId: integer("id").notNull().unique(),
-    email: text("email"),
-    username: text("username").notNull(),
-  },
-  (user) => [uniqueIndex("github_id_index").on(user.githubId)],
-);
-
-export const sessionsTable = sqliteTable("session", {
+export const usersTable = sqliteTable("users", {
   id: text("id").primaryKey().notNull(),
-  userId: text("user_id")
+  email: text("email").notNull(),
+  password: text("password").notNull(),
+  userName: text("userName").notNull(),
+});
+
+export const sessionsTable = sqliteTable("sessions", {
+  id: text("id").primaryKey().notNull(),
+  userId: text("userId")
     .notNull()
     .references(() => usersTable.id),
-  expiresAt: integer("expires_at").notNull(),
+  expiresAt: integer("expiresAt").notNull(),
+  ipAddress: text("ipAddress"),
+  device: text("device"),
+  createdAt: text("createdAt"),
 });

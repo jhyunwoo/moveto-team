@@ -6,20 +6,6 @@
   "observability": {
     "enabled": true
   },
-  "migrations": [
-    {
-      "new_sqlite_classes": ["Counter"],
-      "tag": "v1"
-    }
-  ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "class_name": "Counter",
-        "name": "COUNTER"
-      }
-    ]
-  },
   "d1_databases": [
     {
       "binding": "DB",

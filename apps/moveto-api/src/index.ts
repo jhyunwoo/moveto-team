@@ -1,30 +1,17 @@
 import { Hono } from "hono";
 import { Bindings } from "./types/bindings";
-import { Counter } from "./durable-objects/counter";
-import { TokenBucket } from "./durable-objects/rate-limit";
-import initDb from "./db";
-import authApp from "./routes/auth";
-import { getCurrentSession } from "./lib/auth/session";
-import { cors } from "hono/cors";
+import auth from "./routes/auth";
+import { authMiddleware } from "./middlewares/auth";
+import { Variables } from "./types/variables";
 
-export { Counter, TokenBucket };
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-const app = new Hono<{ Bindings: Bindings }>();
+app.route("/auth", auth);
 
-app.use(
-  "*",
-  cors({
-    origin: ["http://localhost:3000"],
-  }),
-);
+app.use(authMiddleware);
 
-app.route("/auth", authApp);
-
-app.get("/", async (c) => {
-  const db = initDb(c.env.DB);
-
-  const { session } = await getCurrentSession(c, db);
-  return c.json({ session });
+app.get("/", (c) => {
+  return c.json({ state: "Healthy", dateTime: new Date() });
 });
 
 export default app;

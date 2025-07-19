@@ -1,135 +1,81 @@
 import { Hono } from "hono";
 import { Bindings } from "../types/bindings";
-import { generateState, OAuth2Tokens } from "arctic";
-import { github } from "../lib/auth/oauth";
-import { getCookie, setCookie } from "hono/cookie";
-import { createUser, getUserFromGitHubId } from "../lib/auth/user";
+import { decryptText, encryptText, importCryptoKey } from "../lib/aes-256";
+import { zValidator } from "@hono/zod-validator";
+import { userSignUpSchema } from "../lib/validate-schema/user-sign-up";
 import initDb from "../db";
-import {
-  createSession,
-  deleteSessionTokenCookie,
-  generateSessionToken,
-  getCurrentSession,
-  invalidateSession,
-  setSessionTokenCookie,
-} from "../lib/auth/session";
-import { GithubUser } from "../types/github-user";
+import { and, eq } from "drizzle-orm";
+import { usersTable } from "../db/schema";
+import { v4 as uuidv4 } from "uuid";
+import { hashText } from "../lib/hash-text";
+import { userSignInSchema } from "../lib/validate-schema/user-sign-in";
+import { setCookie } from "hono/cookie";
+import { Variables } from "../types/variables";
 
-const authApp = new Hono<{ Bindings: Bindings }>();
+const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-authApp.get("/log-in/github", async (c) => {
-  const db = initDb(c.env.DB);
-  const session = await getCurrentSession(c, db);
-  console.log("session", session);
-  const state = generateState();
-  const url = github(c).createAuthorizationURL(state, []);
-
-  // 쿠키 설정 시, 정확한 도메인/경로/sameSite 설정 확인
-  setCookie(c, "github_oauth_state", state, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax", // 필요시 "none"으로 변경
-  });
-  return c.redirect(url.toString());
+auth.get("/", async (c) => {
+  const aesKey = await importCryptoKey(c.env.AES_KEY);
+  const text = "Hello World";
+  const encrypted = await encryptText(text, aesKey);
+  console.log("암호화된 텍스트:", encrypted);
+  const decrypted = await decryptText(encrypted, aesKey); // encrypted를 복호화
+  console.log("복호화된 텍스트:", decrypted);
+  return c.json({ original: text, encrypted, decrypted });
 });
 
-authApp.get("/log-in/github/callback", async (c) => {
-  const url = new URL(c.req.url);
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
+auth.post("/sign-up", zValidator("json", userSignUpSchema), async (c) => {
+  const { userName, email, password } = c.req.valid("json");
 
-  const storedState = getCookie(c, "github_oauth_state") ?? null;
-  if (code === null || state === null || storedState === null) {
-    return c.status(400);
-  }
-
-  if (state !== storedState) {
-    console.log("Authorized, Redirect to Origin");
-    return c.redirect("http://localhost:3000");
-  }
-  console.log("code", code);
-  console.log("state", state);
-  console.log("storedState", storedState);
-
-  let tokens: OAuth2Tokens;
-  try {
-    tokens = await github(c).validateAuthorizationCode(code);
-  } catch (e) {
-    // Invalid code or client credentials
-    console.error(e);
-    return c.status(400);
-  }
-
-  const githubUserResponse = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `Bearer ${tokens.accessToken()}`,
-      Accept: "application/json",
-      "User-Agent": c.req.header("User-Agent")!,
-    },
+  const db = initDb(c.env.DB);
+  // email 중복 검사
+  const findSameEmail = await db.query.usersTable.findFirst({
+    where: eq(usersTable.email, email),
   });
 
-  if (!githubUserResponse.ok) {
-    const text = await githubUserResponse.text();
-    console.error("GitHub API Error:", text);
-    return c.text("GitHub API Error", 500);
+  if (findSameEmail) {
+    return c.json({ result: "Email already exists" }, { status: 400 });
   }
 
-  let githubUser;
+  // 사용자 등록
   try {
-    githubUser = (await githubUserResponse.json()) as GithubUser;
-  } catch (e) {
-    const text = await githubUserResponse.text();
-    console.error("Failed to parse GitHub user JSON:", text);
-    return c.text("GitHub returned non-JSON", 500);
+    await db.insert(usersTable).values({
+      id: uuidv4(),
+      userName,
+      email,
+      password: await hashText(password),
+    });
+  } catch (err) {
+    console.error(err);
+    return c.json({ result: "DB Insert Error" }, { status: 500 });
   }
 
-  const githubUserId = githubUser?.id;
-  const githubUsername = githubUser?.login;
-  const githubEmail = githubUser?.email;
-
-  const db = initDb(c.env.DB);
-
-  const existingUser = await getUserFromGitHubId(db, githubUserId);
-
-  if (existingUser !== null) {
-    const sessionToken = generateSessionToken();
-    const session = await createSession(db, sessionToken, existingUser.id);
-    setSessionTokenCookie(c, sessionToken, session.expiresAt);
-    return c.redirect(url);
-  }
-
-  const user = await createUser(db, githubUserId, githubEmail, githubUsername);
-
-  const sessionToken = generateSessionToken();
-  const session = await createSession(db, sessionToken, user.id);
-  setSessionTokenCookie(c, sessionToken, session.expiresAt);
-  return c.redirect(url);
+  return c.json({ result: "Success" });
 });
 
-authApp.get("/sign-out", async (c) => {
+auth.put("/sign-in", zValidator("json", userSignInSchema), async (c) => {
+  const { email, password } = c.req.valid("json");
+  console.log(c.env.SESSION);
   const db = initDb(c.env.DB);
 
-  const { session } = await getCurrentSession(c, db);
-  if (!session) {
-    return c.json({ result: "Unauthorized" });
+  // 사용자 탐색 및 비밀번호 확인
+  const userData = await db.query.usersTable.findFirst({
+    where: and(
+      eq(usersTable.email, email),
+      eq(usersTable.password, await hashText(password)),
+    ),
+  });
+
+  if (!userData) {
+    return c.json(
+      { result: "Email or Password is incorrect" },
+      { status: 400 },
+    );
   }
 
-  await invalidateSession(db, session.id);
-  deleteSessionTokenCookie(c);
-  return c.redirect("http://localhost:3000/auth/log-in");
+  setCookie(c, "session", "hello");
+
+  return c.json({ result: "Success" });
 });
 
-authApp.get("/session", async (c) => {
-  const db = initDb(c.env.DB);
-  const session = await getCurrentSession(c, db);
-  console.log("session", session);
-  if (session.session?.id) {
-    return c.json(session);
-  } else {
-    return c.json({ result: "Unauthorized" });
-  }
-});
-
-export default authApp;
+export default auth;
