@@ -12,6 +12,8 @@ import { userSignInSchema } from "../lib/validate-schema/user-sign-in";
 import { Variables } from "../types/variables";
 import createSession from "../lib/auth/create-session";
 import setSession from "../lib/auth/set-session";
+import deleteSession from "../lib/auth/delete-session";
+import { getCookie } from "hono/cookie";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -87,6 +89,15 @@ auth.put("/sign-in", zValidator("json", userSignInSchema), async (c) => {
 
   await setSession(c, encryptedSessionId, session[0].expiresAt);
 
+  return c.json({ result: "Success" });
+});
+
+auth.put("/sign-out", async (c) => {
+  console.log(c.get("session"));
+  const allCookies = getCookie(c);
+  console.log(allCookies);
+  const db = initDb(c.env.DB);
+  await deleteSession(c, db, c.get("session"));
   return c.json({ result: "Success" });
 });
 

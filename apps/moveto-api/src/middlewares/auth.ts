@@ -1,6 +1,6 @@
 import { createMiddleware } from "hono/factory";
 import { Bindings } from "../types/bindings";
-import { getCookie } from "hono/cookie";
+import { deleteCookie, getCookie } from "hono/cookie";
 import { Variables } from "../types/variables";
 import { encryptText, importCryptoKey } from "../lib/aes-256";
 import revalidateSession from "../lib/auth/revalidate-session";
@@ -25,10 +25,12 @@ export const authMiddleware = createMiddleware<{
   Variables: Variables;
 }>(async (c, next) => {
   const session = getCookie(c, "session");
+  console.log("session", session);
   // session 쿠키가 존재할 경우
   if (session) {
     // KV에 저장된 세션이 있는지 확인
     const checkSession = await c.env.KV.get(session);
+    console.log("checkSession", checkSession);
     // 올바른 세션일 경우
     if (checkSession) {
       // kv에 저장된 만료일을 가져옴
@@ -65,9 +67,13 @@ export const authMiddleware = createMiddleware<{
       }
     } else {
       c.set("session", null);
+      deleteCookie(c, "session");
     }
   } else {
     c.set("session", null);
+    deleteCookie(c, "session");
   }
+
+  console.log(c.get("session"));
   await next();
 });
