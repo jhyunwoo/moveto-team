@@ -9,8 +9,9 @@ import { usersTable } from "../db/schema";
 import { v4 as uuidv4 } from "uuid";
 import { hashText } from "../lib/hash-text";
 import { userSignInSchema } from "../lib/validate-schema/user-sign-in";
-import { setCookie } from "hono/cookie";
 import { Variables } from "../types/variables";
+import createSession from "../lib/auth/create-session";
+import setSession from "../lib/auth/set-session";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -54,8 +55,12 @@ auth.post("/sign-up", zValidator("json", userSignUpSchema), async (c) => {
 });
 
 auth.put("/sign-in", zValidator("json", userSignInSchema), async (c) => {
+  console.log(c.get("session"));
+  if (c.get("session")) {
+    return c.json({ result: "Already Signed In" });
+  }
+
   const { email, password } = c.req.valid("json");
-  console.log(c.env.SESSION);
   const db = initDb(c.env.DB);
 
   // 사용자 탐색 및 비밀번호 확인
@@ -73,7 +78,14 @@ auth.put("/sign-in", zValidator("json", userSignInSchema), async (c) => {
     );
   }
 
-  setCookie(c, "session", "hello");
+  const session = await createSession(c, db, userData.id);
+  const encryptedSessionId = await encryptText(
+    session[0].id,
+    await importCryptoKey(c.env.AES_KEY),
+  );
+  console.log(session);
+
+  await setSession(c, encryptedSessionId, session[0].expiresAt);
 
   return c.json({ result: "Success" });
 });

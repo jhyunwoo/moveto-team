@@ -6,9 +6,9 @@ import { Variables } from "./types/variables";
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-app.route("/auth", auth);
-
 app.use(authMiddleware);
+
+app.route("/auth", auth);
 
 app.get("/", (c) => {
   return c.json({ state: "Healthy", dateTime: new Date() });

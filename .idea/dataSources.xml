@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="12e64f137b4df42adac55fd17ce1034f81f804fc2d0c28c0e7dd6a55dcb63b1f.sqlite" uuid="6b1eac56-2a49-4f94-a281-598e01d99980">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/apps/moveto-api/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/12e64f137b4df42adac55fd17ce1034f81f804fc2d0c28c0e7dd6a55dcb63b1f.sqlite</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>
