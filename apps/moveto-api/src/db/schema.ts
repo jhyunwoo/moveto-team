@@ -7,16 +7,23 @@ export const usersTable = sqliteTable("users", {
   password: text("password").notNull(),
   userName: text("userName").notNull(),
   emailVerification: integer("emailVerification", { mode: "boolean" }),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" }).$defaultFn(
+    () => new Date(),
+  ),
 });
 
 export const emailVerificationTable = sqliteTable("emailVerification", {
   id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
   code: text("code").notNull(),
-  expiresAt: text("expiresAt").notNull(),
+  expiresAt: integer("expiresAt", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => new Date()),
   userId: text("userId")
     .notNull()
     .references(() => usersTable.id),
-  createdAt: text().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" }).$defaultFn(
+    () => new Date(),
+  ),
 });
 
 export const sessionsTable = sqliteTable("sessions", {
@@ -27,5 +34,7 @@ export const sessionsTable = sqliteTable("sessions", {
   expiresAt: integer("expiresAt", { mode: "timestamp_ms" }).notNull(),
   ipAddress: text("ipAddress"),
   device: text("device"),
-  createdAt: text().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => new Date()),
 });
