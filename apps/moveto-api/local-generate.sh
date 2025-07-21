@@ -16,7 +16,7 @@ for sql_file in "$SQL_DIR"/*.sql; do
   # 로그 파일에 존재하지 않으면 실행
   if ! grep -Fxq "$file_name" "$LOG_FILE"; then
     echo "Applying: $file_name"
-    npx wrangler d1 execute "$DB_NAME" --local --file="$sql_file"
+    npx wrangler d1 execute "$DB_NAME" --local --file="$sql_file" -e dev
 
     # 성공적으로 실행되었을 경우에만 로그에 기록
     if [ $? -eq 0 ]; then
