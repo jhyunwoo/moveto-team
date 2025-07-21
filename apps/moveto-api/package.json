@@ -15,15 +15,18 @@
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.2",
+    "@repo/transactional": "workspace:*",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.44.3",
     "hono": "^4.8.5",
+    "resend": "^4.7.0",
     "uuid": "^11.1.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {
     "@types/node": "^24.0.14",
     "drizzle-kit": "^0.31.4",
-    "wrangler": "^4.25.0"
+    "wrangler": "^4.25.0",
+    "@react-email/components": "^0.3.2"
   }
 }

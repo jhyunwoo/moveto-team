@@ -6,6 +6,17 @@ export const usersTable = sqliteTable("users", {
   email: text("email").notNull(),
   password: text("password").notNull(),
   userName: text("userName").notNull(),
+  emailVerification: integer("emailVerification", { mode: "boolean" }),
+});
+
+export const emailVerificationTable = sqliteTable("emailVerification", {
+  id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
+  code: text("code").notNull(),
+  expiresAt: text("expiresAt").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => usersTable.id),
+  createdAt: text().default(sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const sessionsTable = sqliteTable("sessions", {

@@ -8,3 +8,6 @@
 0007_skinny_namor.sql
 0008_cuddly_colonel_america.sql
 0009_spooky_banshee.sql
+0010_stormy_pride.sql
+0011_brief_ironclad.sql
+0012_kind_vertigo.sql

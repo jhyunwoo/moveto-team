@@ -5,4 +5,5 @@ export type Bindings = {
   GITHUB_CLIENT_SECRET: string;
   AES_KEY: string;
   SESSION: string;
+  RESEND_API: string;
 };

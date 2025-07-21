@@ -13,6 +13,7 @@ import createSession from "../lib/auth/create-session";
 import setSession from "../lib/auth/set-session";
 import deleteSession from "../lib/auth/delete-session";
 import { sha512PasswordHash } from "../lib/sha-512-password-hash";
+import requestEmailVerification from "../lib/auth/request-email-verification";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -29,9 +30,9 @@ auth.post("/sign-up", zValidator("json", userSignUpSchema), async (c) => {
     return c.json({ result: "Email already exists" }, { status: 400 });
   }
 
+  const userId = uuidv4();
   // 사용자 등록
   try {
-    const userId = uuidv4();
     await db.insert(usersTable).values({
       id: userId,
       userName,
@@ -43,7 +44,12 @@ auth.post("/sign-up", zValidator("json", userSignUpSchema), async (c) => {
     return c.json({ result: "DB Insert Error" }, { status: 500 });
   }
 
-  return c.json({ result: "Success" });
+  // 이메일 인증 전송
+  await requestEmailVerification(db, c.env.RESEND_API, userId, email);
+
+  return c.json({
+    result: "Request Email Verification",
+  });
 });
 
 auth.put("/sign-in", zValidator("json", userSignInSchema), async (c) => {
@@ -68,22 +74,32 @@ auth.put("/sign-in", zValidator("json", userSignInSchema), async (c) => {
   }
 
   // hash 한 비밀번호와 DB에 저장된 비밀번호 값이 같을 경우 세션 생성 후 등록
-  if ((await sha512PasswordHash(userData.id, password)) === userData.password) {
-    // 세션 생성
-    const session = await createSession(c, db, userData.id);
-    // 세션 id 암호화
-    const encryptedSessionId = await encryptText(
-      session[0].id,
-      await importCryptoKey(c.env.AES_KEY),
-    );
-    // 세션 쿠키에 등록 및 KV에 등록
-    await setSession(c, encryptedSessionId, session[0].expiresAt);
-  } else {
+  if ((await sha512PasswordHash(userData.id, password)) !== userData.password) {
     return c.json(
       { result: "Email or Password is incorrect" },
       { status: 400 },
     );
   }
+
+  if (!userData.emailVerification) {
+    // 이메일 인증 전송
+    // 이메일 인증 전송
+    await requestEmailVerification(db, c.env.RESEND_API, userData.id, email);
+
+    return c.json({
+      result: "Request Email Verification",
+    });
+  }
+
+  // 세션 생성
+  const session = await createSession(c, db, userData.id);
+  // 세션 id 암호화
+  const encryptedSessionId = await encryptText(
+    session[0].id,
+    await importCryptoKey(c.env.AES_KEY),
+  );
+  // 세션 쿠키에 등록 및 KV에 등록
+  await setSession(c, encryptedSessionId, session[0].expiresAt);
 
   return c.json({ result: "Success" });
 });
