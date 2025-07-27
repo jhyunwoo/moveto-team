@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { Bindings } from "../types/bindings";
-import { encryptText, importCryptoKey } from "../lib/aes-256";
+import { decryptText, encryptText, importCryptoKey } from "../lib/aes-256";
 import { zValidator } from "@hono/zod-validator";
 import { userSignUpSchema } from "../lib/validate-schema/user-sign-up";
 import initDb from "../db";
 import { eq } from "drizzle-orm";
-import { usersTable } from "../db/schema";
+import { sessionsTable, usersTable } from "../db/schema";
 import { v4 as uuidv4 } from "uuid";
 import { userSignInSchema } from "../lib/validate-schema/user-sign-in";
 import { Variables } from "../types/variables";
@@ -14,6 +14,7 @@ import setSession from "../lib/auth/set-session";
 import deleteSession from "../lib/auth/delete-session";
 import { sha512PasswordHash } from "../lib/sha-512-password-hash";
 import requestEmailVerification from "../lib/auth/request-email-verification";
+import { emailVerificationSchema } from "../lib/validate-schema/email-verification";
 
 const auth = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -111,5 +112,34 @@ auth.put("/sign-out", async (c) => {
 
   return c.json({ result: "Success" });
 });
+
+auth.put(
+  "/verify/email",
+  zValidator("json", emailVerificationSchema),
+  async (c) => {
+    const userSession = c.get("session");
+    if (!userSession) {
+      return c.json({ result: "Unauthorized" }, { status: 403 });
+    }
+
+    const decryptedSessionId = await decryptText(
+      userSession,
+      await importCryptoKey(c.env.AES_KEY),
+    );
+
+    const { verificationCode } = await c.req.valid("json");
+    const db = initDb(c.env.DB);
+
+    const userInfo = await db.query.sessionsTable.findMany({
+      where: eq(sessionsTable.id, decryptedSessionId),
+      with: {
+        usersTable: true,
+      },
+    });
+    console.log(userInfo, verificationCode);
+
+    return c.json({ result: "Success" });
+  },
+);
 
 export default auth;

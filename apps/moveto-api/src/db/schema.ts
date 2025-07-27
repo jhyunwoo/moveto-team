@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm";
 
 export const usersTable = sqliteTable("users", {
   id: text("id").primaryKey().notNull(),
@@ -10,6 +11,10 @@ export const usersTable = sqliteTable("users", {
     () => new Date(),
   ),
 });
+
+export const usersRelation = relations(usersTable, ({ one }) => ({
+  emailVerification: one(emailVerificationTable),
+}));
 
 export const emailVerificationTable = sqliteTable("emailVerification", {
   id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
@@ -24,6 +29,16 @@ export const emailVerificationTable = sqliteTable("emailVerification", {
     () => new Date(),
   ),
 });
+
+export const emailVerificationRelations = relations(
+  emailVerificationTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [emailVerificationTable.userId],
+      references: [usersTable.id],
+    }),
+  }),
+);
 
 export const sessionsTable = sqliteTable("sessions", {
   id: text("id").primaryKey().notNull(),
