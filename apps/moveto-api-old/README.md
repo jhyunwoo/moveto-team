@@ -6,6 +6,7 @@
 npx wrangler d1 create <DATABASE_NAME>
 ```
 - Change D1 database id in wrangler.jsonc file to created db id.
+- Change DB Id of .env file
 
 ### Set KV Namespace
 ```bash

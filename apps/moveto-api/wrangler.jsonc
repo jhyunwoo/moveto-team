@@ -2,55 +2,30 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "moveto-api",
   "main": "src/index.ts",
-  "compatibility_date": "2025-07-16",
+  "compatibility_date": "2025-08-02",
   "observability": {
     "enabled": true
   },
-  "env": {
-    "dev": {
-      "vars": {
-        "ENV": "dev"
-      },
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "moveto-api",
-          "database_id": "7b65613e-e6e4-4cd5-8a98-2e8a1a224e66"
-        }
-      ],
-      "kv_namespaces": [
-        {
-          "binding": "KV",
-          "id": "db96a3c2aa964c7392aa86d3dcbbf5d0"
-        }
-      ]
-    },
-    "production": {
-      "vars": {
-        "ENV": "production"
-      },
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "moveto-api",
-          "database_id": "7b65613e-e6e4-4cd5-8a98-2e8a1a224e66"
-        }
-      ],
-      "kv_namespaces": [
-        {
-          "binding": "KV",
-          "id": "db96a3c2aa964c7392aa86d3dcbbf5d0"
-        }
-      ]
-    }
-  },
-  "routes": [
+  "d1_databases": [
     {
-      "pattern": "api.moveto.kr",
-      "custom_domain": true
+      "binding": "DB",
+      "database_name": "hono-cf-template",
+      "database_id": "844261f7-40e4-48ce-a36d-2e0f7758468d"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "hono_cf_template",
+      "id": "9208a67ecaa74515afe7f2bd853b4147"
+    }
+  ],
+  "services": [
+    {
+      "binding": "ARGON2",
+      "service": "argon2"
     }
   ]
-// "compatibility_flags": [
+  // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
   // "vars": {

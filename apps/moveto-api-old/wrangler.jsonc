@@ -1,0 +1,85 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "moveto-api-old",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-07-16",
+  "observability": {
+    "enabled": true
+  },
+  "env": {
+    "dev": {
+      "vars": {
+        "ENV": "dev"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "moveto-api",
+          "database_id": "7b65613e-e6e4-4cd5-8a98-2e8a1a224e66"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "KV",
+          "id": "db96a3c2aa964c7392aa86d3dcbbf5d0"
+        }
+      ]
+    },
+    "production": {
+      "vars": {
+        "ENV": "production"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "moveto-api",
+          "database_id": "7b65613e-e6e4-4cd5-8a98-2e8a1a224e66"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "KV",
+          "id": "db96a3c2aa964c7392aa86d3dcbbf5d0"
+        }
+      ]
+    }
+  },
+  "routes": [
+    {
+      "pattern": "api.moveto.kr",
+      "custom_domain": true
+    }
+  ]
+// "compatibility_flags": [
+  //   "nodejs_compat"
+  // ],
+  // "vars": {
+  //   "MY_VAR": "my-variable"
+  // },
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "MY_KV_NAMESPACE",
+  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  //   }
+  // ],
+  // "r2_buckets": [
+  //   {
+  //     "binding": "MY_BUCKET",
+  //     "bucket_name": "my-bucket"
+  //   }
+  // ],
+  // "d1_databases": [
+  //   {
+  //     "binding": "MY_DB",
+  //     "database_name": "my-database",
+  //     "database_id": ""
+  //   }
+  // ],
+  // "ai": {
+  //   "binding": "AI"
+  // },
+  // "observability": {
+  //   "enabled": true,
+  //   "head_sampling_rate": 1
+  // }
+}
