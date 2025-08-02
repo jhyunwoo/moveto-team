@@ -2,7 +2,7 @@
 
 # 적용 내역을 저장할 파일
 LOG_FILE="applied_sql_files.txt"
-DB_NAME="hono-cf-template"
+DB_NAME="moveto-api"
 SQL_DIR="./drizzle"
 
 # 파일이 없으면 생성

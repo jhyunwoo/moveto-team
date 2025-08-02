@@ -14,6 +14,13 @@ export class Kv {
   }
 
   /**
+   * 모든 key-value 값을 반환
+   */
+  async listKV() {
+    return this.KV.list();
+  }
+
+  /**
    * KV에 key와 value 값을 등록하는 함수
    * @param key
    * @param value

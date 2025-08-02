@@ -9,14 +9,20 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "hono-cf-template",
-      "database_id": "844261f7-40e4-48ce-a36d-2e0f7758468d"
+      "database_name": "moveto-api",
+      "database_id": "3f52cf74-a039-49bd-a998-68fd00883433"
     }
   ],
   "kv_namespaces": [
     {
-      "binding": "hono_cf_template",
-      "id": "9208a67ecaa74515afe7f2bd853b4147"
+      "binding": "KV",
+      "id": "f47d228a5c8d488883b8317ad81fd0d8"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "moveto-v3",
+      "binding": "R2"
     }
   ],
   "services": [
