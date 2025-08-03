@@ -2,11 +2,14 @@ import { ENV } from "../types/env";
 import { Context } from "hono";
 import initDb from "../db";
 import { eq } from "drizzle-orm";
-import { userTable } from "../db/schema";
+import { emailVerificationTable, userTable } from "../db/schema";
 import { ZodError } from "zod";
 import { hashText, verifyHash } from "../lib/crypto/argon2-hash";
 import { SessionController } from "./session.controller";
 import { Controller } from "../types/controller";
+import { Resend } from "resend";
+import VerifyEmail from "@repo/transactional/emails/verify-email";
+import createVerificationCode from "../lib/create-verification-code";
 
 export async function signUp(
   c: Context<ENV>,
@@ -46,16 +49,14 @@ export async function signUp(
   }
 
   // 사용자 정보 생성
+  const userId = crypto.randomUUID();
   try {
     await db.insert(userTable).values({
-      id: crypto.randomUUID(),
+      id: userId,
       email: email,
       passwordHash: await hashText(c.env.ARGON2, password),
       name: username,
     });
-    return {
-      success: true,
-    };
   } catch (e) {
     console.error(e);
     return {
@@ -63,6 +64,47 @@ export async function signUp(
       error: "DB Insert Error",
     };
   }
+
+  // email 인증 생성
+  await sendVerificationCode(c, userId, email);
+
+  return {
+    success: true,
+  };
+}
+
+// 인증 메일을 보내는 함수
+export async function sendVerificationCode(
+  c: Context<ENV>,
+  userId: string,
+  email: string,
+) {
+  const db = initDb(c.env.DB);
+
+  // email 인증 생성
+  const randomCode = await createVerificationCode(c);
+  const now = new Date(); // 현재 시간
+  const expiresDate = new Date();
+  expiresDate.setMinutes(now.getMinutes() + 10);
+
+  await db.insert(emailVerificationTable).values({
+    userId: userId,
+    code: randomCode,
+    expiresAt: expiresDate,
+    active: true,
+  });
+
+  const resend = new Resend();
+
+  await resend.emails.send({
+    from: "모베토 <support.moveto.kr>",
+    to: email,
+    subject: `모베토 이메일 인증 코드 - ${randomCode}`,
+    react: VerifyEmail({
+      verificationCode: randomCode,
+      redirectUrl: "https://www.moveto.kr/auth/verification",
+    }),
+  });
 }
 
 export async function signIn(
@@ -111,6 +153,43 @@ export async function signOut(c: Context<ENV>): Promise<Controller> {
   const sessionRemove = await session.remove();
   if (!sessionRemove.success) {
     return sessionRemove;
+  }
+
+  return {
+    success: true,
+  };
+}
+
+export async function verifyEmail(
+  c: Context<ENV>,
+  verifyCode: string,
+): Promise<Controller> {
+  const db = initDb(c.env.DB);
+
+  const findVerifyCode = await db.query.emailVerificationTable.findFirst({
+    where: eq(emailVerificationTable.code, verifyCode),
+  });
+
+  if (!findVerifyCode) {
+    return {
+      success: false,
+      error: "Cannot verify email verification",
+    };
+  }
+
+  // 사용자 이메일 인증 처리
+  try {
+    await db
+      .update(userTable)
+      .set({
+        emailVerification: new Date(),
+      })
+      .where(eq(userTable.id, findVerifyCode.userId));
+  } catch (e) {
+    return {
+      success: false,
+      error: "Cannot find user",
+    };
   }
 
   return {

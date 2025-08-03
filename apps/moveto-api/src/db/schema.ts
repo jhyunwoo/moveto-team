@@ -5,6 +5,7 @@ export const userTable = sqliteTable("user_table", {
   id: text("id").primaryKey().notNull(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  emailVerification: int("emailVerification", { mode: "timestamp_ms" }),
   passwordHash: text("passwordHash").notNull(),
   createdAt: int("createdAt", { mode: "timestamp_ms" }).$defaultFn(
     () => new Date(),
@@ -13,7 +14,28 @@ export const userTable = sqliteTable("user_table", {
 
 export const userRelation = relations(userTable, ({ many }) => ({
   sessions: many(sessionTable),
+  emailVerifications: many(emailVerificationTable),
 }));
+
+export const emailVerificationTable = sqliteTable("emailVerification", {
+  id: int("id").primaryKey({ autoIncrement: true }).notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => userTable.id),
+  code: text("code").notNull(),
+  expiresAt: int("expiresAt", { mode: "timestamp_ms" }).notNull(),
+  active: int("active", { mode: "boolean" }).default(true),
+});
+
+export const emailVerificationRelation = relations(
+  emailVerificationTable,
+  ({ one }) => ({
+    user: one(userTable, {
+      fields: [emailVerificationTable.userId],
+      references: [userTable.id],
+    }),
+  }),
+);
 
 export const sessionTable = sqliteTable("session_table", {
   id: text("id").primaryKey().notNull(),
@@ -22,7 +44,7 @@ export const sessionTable = sqliteTable("session_table", {
 });
 
 export const sessionRelation = relations(sessionTable, ({ one }) => ({
-  author: one(userTable, {
+  user: one(userTable, {
     fields: [sessionTable.userId],
     references: [userTable.id],
   }),

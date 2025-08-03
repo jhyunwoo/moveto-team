@@ -2,3 +2,6 @@
 0001_dry_guardsmen.sql
 0002_nosy_senator_kelly.sql
 0003_bright_green_goblin.sql
+0004_sudden_magus.sql
+0005_absurd_marvel_boy.sql
+0006_deep_captain_stacy.sql

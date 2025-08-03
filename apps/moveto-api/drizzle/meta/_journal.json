@@ -29,6 +29,27 @@
       "when": 1754134506893,
       "tag": "0003_bright_green_goblin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1754219129715,
+      "tag": "0004_sudden_magus",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1754220321185,
+      "tag": "0005_absurd_marvel_boy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1754220432809,
+      "tag": "0006_deep_captain_stacy",
+      "breakpoints": true
     }
   ]
 }
