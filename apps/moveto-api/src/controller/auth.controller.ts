@@ -6,13 +6,14 @@ import { userTable } from "../db/schema";
 import { ZodError } from "zod";
 import { hashText, verifyHash } from "../lib/crypto/argon2-hash";
 import { SessionController } from "./session.controller";
+import { Controller } from "../types/controller";
 
 export async function signUp(
   c: Context<ENV>,
   username: string,
   email: string,
   password: string,
-) {
+): Promise<Controller> {
   const db = initDb(c.env.DB);
   // 기존에 있는 사용자인지 확인
   const checkExists = await db.query.userTable.findFirst({
@@ -34,7 +35,7 @@ export async function signUp(
       console.error("검증 오류:", e.message);
       return {
         success: false,
-        error: JSON.parse(e.message),
+        error: e.message,
       };
     }
     console.error("알 수 없는 오류:", e);
@@ -45,18 +46,30 @@ export async function signUp(
   }
 
   // 사용자 정보 생성
-  return db
-    .insert(userTable)
-    .values({
+  try {
+    await db.insert(userTable).values({
       id: crypto.randomUUID(),
       email: email,
       passwordHash: await hashText(c.env.ARGON2, password),
       name: username,
-    })
-    .returning();
+    });
+    return {
+      success: true,
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      success: false,
+      error: "DB Insert Error",
+    };
+  }
 }
 
-export async function signIn(c: Context<ENV>, email: string, password: string) {
+export async function signIn(
+  c: Context<ENV>,
+  email: string,
+  password: string,
+): Promise<Controller> {
   const db = initDb(c.env.DB);
 
   const userData = await db.query.userTable.findFirst({
@@ -71,29 +84,36 @@ export async function signIn(c: Context<ENV>, email: string, password: string) {
   }
 
   // 비밀번호가 일치할 경우
-  if (await verifyHash(c.env.ARGON2, password, userData.passwordHash)) {
-    // 세션을 생성
-    const session = new SessionController(c);
-    if (await session.create(userData.id)) {
-      return {
-        success: true,
-      };
-    } else {
-      // 세션 생성이 올바르게 되지 않은 경우
-      return {
-        success: false,
-        error: "세션 생성 과정에서 오류가 발생하였습니다.",
-      };
-    }
+  if (!(await verifyHash(c.env.ARGON2, password, userData.passwordHash))) {
+    return {
+      success: false,
+      error: "Error!",
+    };
+  }
+
+  // 세션을 생성
+  const session = new SessionController(c);
+
+  const createSession = await session.create(userData.id);
+
+  if (!createSession) {
+    // 세션 생성이 올바르게 되지 않은 경우
+    return createSession;
   }
 
   return {
-    success: false,
-    error: "Error!",
+    success: true,
   };
 }
 
-export async function signOut(c: Context<ENV>) {
+export async function signOut(c: Context<ENV>): Promise<Controller> {
   const session = new SessionController(c);
-  await session.remove();
+  const sessionRemove = await session.remove();
+  if (!sessionRemove.success) {
+    return sessionRemove;
+  }
+
+  return {
+    success: true,
+  };
 }
