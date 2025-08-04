@@ -18,7 +18,7 @@ export const userRelation = relations(userTable, ({ many }) => ({
 }));
 
 export const emailVerificationTable = sqliteTable("emailVerification", {
-  id: int("id").primaryKey({ autoIncrement: true }).notNull(),
+  id: text("id").primaryKey().notNull(),
   userId: text("userId")
     .notNull()
     .references(() => userTable.id),

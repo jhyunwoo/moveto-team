@@ -5,3 +5,4 @@
 0004_sudden_magus.sql
 0005_absurd_marvel_boy.sql
 0006_deep_captain_stacy.sql
+0007_ambiguous_madripoor.sql

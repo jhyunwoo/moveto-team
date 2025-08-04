@@ -5,4 +5,5 @@ export type Bindings = {
   ARGON2: Fetcher;
   COOKIE_SECRET: string;
   API_URL: string;
+  RESEND_API: string;
 };

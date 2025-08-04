@@ -23,12 +23,29 @@ export const authMiddleware = createMiddleware<ENV>(async (c, next) => {
   }
 
   // session data가 있을 경우
-  // session에 kv안에 있는 데이터 저장
+  // session에 kv 안에 있는 데이터 저장
   const sessionData = JSON.parse(sessionKv) as Session;
 
-  // 만약 세션 만료가 7일 미만으로 남은 경우 세션 revalidate
-  const session = new SessionController(c);
-  await session.revalidate(sessionId);
+  const now = new Date();
+  const expiresAt = new Date(sessionData.expiresAt);
+
+  if (expiresAt < now) {
+    const session = new SessionController(c);
+    await session.remove();
+    return c.json({ error: "Session expired" }, { status: 401 });
+  }
+
+  // 7일(밀리초 단위)
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+
+  // 만료 7일 전 시점 계산
+  const needRevalidate = new Date(expiresAt.getTime() - sevenDaysMs);
+
+  if (needRevalidate < now) {
+    console.log("Revalidate Session");
+    const session = new SessionController(c);
+    await session.revalidate(sessionId);
+  }
 
   // 세션 데이터 variable 에 저장
   c.set("session", sessionData);

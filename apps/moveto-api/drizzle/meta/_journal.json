@@ -50,6 +50,13 @@
       "when": 1754220432809,
       "tag": "0006_deep_captain_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1754291577412,
+      "tag": "0007_ambiguous_madripoor",
+      "breakpoints": true
     }
   ]
 }

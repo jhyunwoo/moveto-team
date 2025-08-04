@@ -50,12 +50,8 @@
           "name": "emailVerification_userId_user_table_id_fk",
           "tableFrom": "emailVerification",
           "tableTo": "user_table",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -95,12 +91,8 @@
           "name": "session_table_userId_user_table_id_fk",
           "tableFrom": "session_table",
           "tableTo": "user_table",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -158,9 +150,7 @@
       "indexes": {
         "user_table_email_unique": {
           "name": "user_table_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },

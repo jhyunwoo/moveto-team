@@ -19,10 +19,10 @@ export default function VerifyEmail({
   return (
     <Tailwind>
       <Head>
-        <title>{`스토미 이메일 인증 코드 - ${verificationCode}`}</title>
+        <title>{`모베토 이메일 인증 코드 - ${verificationCode}`}</title>
       </Head>
       <Container className={"p-4 pb-20 w-full bg-[#f5f5f5]"}>
-        <Heading as={"h1"}>스토미 이메일 인증 코드</Heading>
+        <Heading as={"h1"}>모베토 이메일 인증 코드</Heading>
         <Text>이메일 인증을 위해 아래 코드를 이메일 인증에 입력해주세요.</Text>
         <table className="w-full bg-white p-2 rounded-md mb-4">
           <tr className="w-full">

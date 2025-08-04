@@ -189,7 +189,9 @@ export class SessionController {
           sameSite: "Lax",
           secure: this.context.env.API_URL.startsWith("https"),
           httpOnly: true,
-          domain: this.context.env.API_URL,
+          ...(this.context.env.API_URL.endsWith("https")
+            ? { domain: this.context.env.API_URL.replace("https://", "") }
+            : {}),
         },
       );
       return {
