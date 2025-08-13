@@ -32,7 +32,6 @@ export async function signUp(
 
   // 비밀번호 안전성 검사
   try {
-    console.log("유효한 비밀번호:", password);
   } catch (e) {
     if (e instanceof ZodError) {
       console.error("검증 오류:", e.message);

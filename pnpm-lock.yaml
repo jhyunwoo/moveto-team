@@ -133,7 +133,7 @@ importers:
     dependencies:
       '@opennextjs/cloudflare':
         specifier: ^1.6.5
-        version: 1.6.5(wrangler@4.28.1)
+        version: 1.6.5(wrangler@4.29.0)
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -163,11 +163,11 @@ importers:
         specifier: ^20.19.10
         version: 20.19.10
       '@types/react':
-        specifier: ^19.1.9
-        version: 19.1.9
+        specifier: ^19.1.10
+        version: 19.1.10
       '@types/react-dom':
         specifier: ^19.1.7
-        version: 19.1.7(@types/react@19.1.9)
+        version: 19.1.7(@types/react@19.1.10)
       eslint:
         specifier: ^9.33.0
         version: 9.33.0
@@ -178,8 +178,8 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
       wrangler:
-        specifier: ^4.28.1
-        version: 4.28.1
+        specifier: ^4.29.0
+        version: 4.29.0
 
   apps/next-cf-template:
     dependencies:
@@ -705,8 +705,8 @@ packages:
       - aws-crt
     dev: false
 
-  /@aws-sdk/client-lambda@3.864.0:
-    resolution: {integrity: sha512-K+jSyCBu9jU+E5TPBrzDVcpW5VR1hUnt+iOTvb5M4Uko+alhpenbJDF0kKgC8E2cAMoxRI/X9YjqqAvtYESL+g==}
+  /@aws-sdk/client-lambda@3.865.0:
+    resolution: {integrity: sha512-ncCEW/kNRV8yJA/45z5HO6WEeihADzFY7RISfezDbvP3/X4dZb2gycRVPmJIE6CBqf01jwTkbG36qO+/iHIELg==}
     engines: {node: '>=18.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
@@ -1892,6 +1892,18 @@ packages:
 
   /@cloudflare/unenv-preset@2.6.0(unenv@2.0.0-rc.19)(workerd@1.20250803.0):
     resolution: {integrity: sha512-h7Txw0WbDuUbrvZwky6+x7ft+U/Gppfn/rWx6IdR+e9gjygozRJnV26Y2TOr3yrIFa6OsZqqR2lN+jWTrakHXg==}
+    peerDependencies:
+      unenv: 2.0.0-rc.19
+      workerd: ^1.20250802.0
+    peerDependenciesMeta:
+      workerd:
+        optional: true
+    dependencies:
+      unenv: 2.0.0-rc.19
+      workerd: 1.20250803.0
+
+  /@cloudflare/unenv-preset@2.6.1(unenv@2.0.0-rc.19)(workerd@1.20250803.0):
+    resolution: {integrity: sha512-48rC6jo9CkSRkImfu5KU4zKyoPJx7b9GTUpZn0Emr6J+jkmrLhwCY3BI10QS+fhOt1NkJNlxIcYrBgvWeCpKOw==}
     peerDependencies:
       unenv: 2.0.0-rc.19
       workerd: ^1.20250802.0
@@ -4256,7 +4268,7 @@ packages:
       '@ast-grep/napi': 0.35.0
       '@aws-sdk/client-cloudfront': 3.398.0
       '@aws-sdk/client-dynamodb': 3.864.0
-      '@aws-sdk/client-lambda': 3.864.0
+      '@aws-sdk/client-lambda': 3.865.0
       '@aws-sdk/client-s3': 3.864.0
       '@aws-sdk/client-sqs': 3.864.0
       '@node-minify/core': 8.0.6
@@ -4288,6 +4300,26 @@ packages:
       glob: 11.0.3
       ts-tqdm: 0.8.6
       wrangler: 4.28.1
+      yargs: 18.0.0
+    transitivePeerDependencies:
+      - aws-crt
+      - encoding
+      - supports-color
+    dev: false
+
+  /@opennextjs/cloudflare@1.6.5(wrangler@4.29.0):
+    resolution: {integrity: sha512-eOoRrslJW/cK5RotFHA8Se/KlKyynOFA29i9jor4cp1JF/AkGSwatUaBNK0oLvqM4nDCq3Bo/HlYRbyc/R/T0w==}
+    hasBin: true
+    peerDependencies:
+      wrangler: ^4.24.4
+    dependencies:
+      '@dotenvx/dotenvx': 1.31.0
+      '@opennextjs/aws': 3.7.4
+      cloudflare: 4.5.0
+      enquirer: 2.4.1
+      glob: 11.0.3
+      ts-tqdm: 0.8.6
+      wrangler: 4.29.0
       yargs: 18.0.0
     transitivePeerDependencies:
       - aws-crt
@@ -6828,6 +6860,14 @@ packages:
       '@types/react': 19.1.8
     dev: true
 
+  /@types/react-dom@19.1.7(@types/react@19.1.10):
+    resolution: {integrity: sha512-i5ZzwYpqjmrKenzkoLM2Ibzt6mAsM7pxB6BCIouEVVmgiqaMj1TjaK7hnA36hbW5aZv20kx7Lw6hWzPWg0Rurw==}
+    peerDependencies:
+      '@types/react': ^19.0.0
+    dependencies:
+      '@types/react': 19.1.10
+    dev: true
+
   /@types/react-dom@19.1.7(@types/react@19.1.9):
     resolution: {integrity: sha512-i5ZzwYpqjmrKenzkoLM2Ibzt6mAsM7pxB6BCIouEVVmgiqaMj1TjaK7hnA36hbW5aZv20kx7Lw6hWzPWg0Rurw==}
     peerDependencies:
@@ -6838,6 +6878,12 @@ packages:
 
   /@types/react@19.0.10:
     resolution: {integrity: sha512-JuRQ9KXLEjaUNjTWpzuR231Z2WpIwczOkBEIvbHNCzQefFIT0L8IqE6NV6ULLyC1SI/i234JnDoMkfg+RjQj2g==}
+    dependencies:
+      csstype: 3.1.3
+    dev: true
+
+  /@types/react@19.1.10:
+    resolution: {integrity: sha512-EhBeSYX0Y6ye8pNebpKrwFJq7BoQ8J5SO6NlvNwwHjSj6adXJViPQrKlsyPw7hLBLvckEMO1yxeGdR82YBBlDg==}
     dependencies:
       csstype: 3.1.3
     dev: true
@@ -10513,6 +10559,27 @@ packages:
       - bufferutil
       - utf-8-validate
 
+  /miniflare@4.20250803.1:
+    resolution: {integrity: sha512-9ddfJ6GRg3DFZDgLu6BpfwFVZWIJywVE9N9dYzjLZDvp/azXKiB4Pi9BYK7TqsOJb8YIpxsuwNT03RBvOC8B6g==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      acorn: 8.14.0
+      acorn-walk: 8.3.2
+      exit-hook: 2.2.1
+      glob-to-regexp: 0.4.1
+      sharp: 0.33.5
+      stoppable: 1.1.0
+      undici: 7.13.0
+      workerd: 1.20250803.0
+      ws: 8.18.0
+      youch: 4.1.0-beta.10
+      zod: 3.22.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   /minimatch@10.0.3:
     resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
     engines: {node: 20 || >=22}
@@ -13262,6 +13329,30 @@ packages:
       blake3-wasm: 2.1.5
       esbuild: 0.25.4
       miniflare: 4.20250803.0
+      path-to-regexp: 6.3.0
+      unenv: 2.0.0-rc.19
+      workerd: 1.20250803.0
+    optionalDependencies:
+      fsevents: 2.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  /wrangler@4.29.0:
+    resolution: {integrity: sha512-RBVgBBD1++EYbcAp19TK8i7bHIt6dnjbFULeWRPplQ0pAHegWKKY2MEkZNL8PfsCrycrZt2J/ShgXFE7xdoy7w==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+    peerDependencies:
+      '@cloudflare/workers-types': ^4.20250803.0
+    peerDependenciesMeta:
+      '@cloudflare/workers-types':
+        optional: true
+    dependencies:
+      '@cloudflare/kv-asset-handler': 0.4.0
+      '@cloudflare/unenv-preset': 2.6.1(unenv@2.0.0-rc.19)(workerd@1.20250803.0)
+      blake3-wasm: 2.1.5
+      esbuild: 0.25.4
+      miniflare: 4.20250803.1
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.19
       workerd: 1.20250803.0
