@@ -1,4 +1,6 @@
-export default function HomePage() {
+import { ReactElement } from "react";
+
+export default function HomePage(): ReactElement {
   return (
     <div
       className={"w-full h-screen flex items-center justify-center text-center"}

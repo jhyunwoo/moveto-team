@@ -5,7 +5,15 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        ".open-next/**",
+        "out/**",
+        "build/**",
+        "target/**"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -18,11 +26,20 @@
       "persistent": true
     },
     "deploy": {
-      "dependsOn": ["^deploy"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars"],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        ".open-next/**",
+        "out/**",
+        "build/**",
+        "target/**"
+      ]
     },
     "preview": {
-      "dependsOn": ["^preview"],
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars"]
     },
     "cf-typegen": {
