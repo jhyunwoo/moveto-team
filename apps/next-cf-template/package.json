@@ -14,7 +14,7 @@
   "dependencies": {
     "@opennextjs/cloudflare": "^1.6.5",
     "@repo/ui": "workspace:*",
-    "next": "^15.4.6",
+    "next": "^15.5.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -22,13 +22,13 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^20.19.10",
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
-    "eslint": "^9.33.0",
-    "tailwindcss": "^4.1.11",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^20.19.11",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.34.0",
+    "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
-    "wrangler": "^4.28.1"
+    "wrangler": "^4.33.1"
   }
 }

@@ -15,12 +15,12 @@
   },
   "dependencies": {
     "dotenv": "^17.2.1",
-    "drizzle-orm": "^0.44.4",
-    "hono": "^4.9.0"
+    "drizzle-orm": "^0.44.5",
+    "hono": "^4.9.5"
   },
   "devDependencies": {
-    "@types/node": "^24.2.1",
+    "@types/node": "^24.3.0",
     "drizzle-kit": "^0.31.4",
-    "wrangler": "^4.28.1"
+    "wrangler": "^4.33.1"
   }
 }
