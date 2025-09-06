@@ -1,4 +1,4 @@
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 export const userTable = sqliteTable("user_table", {
@@ -6,7 +6,7 @@ export const userTable = sqliteTable("user_table", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerification: int("emailVerification", { mode: "timestamp_ms" }),
-  passwordHash: text("passwordHash").notNull(),
+  passwordHash: text("passwordHash"),
   createdAt: int("createdAt", { mode: "timestamp_ms" }).$defaultFn(
     () => new Date(),
   ),
@@ -16,6 +16,25 @@ export const userRelation = relations(userTable, ({ many }) => ({
   sessions: many(sessionTable),
   emailVerifications: many(emailVerificationTable),
 }));
+
+export const accountTable = sqliteTable(
+  "accounts",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    email: text("email"),
+    emailVerification: int("emailVerification", { mode: "boolean" }),
+    picture: text("picture"),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  }),
+);
 
 export const emailVerificationTable = sqliteTable("emailVerification", {
   id: text("id").primaryKey().notNull(),

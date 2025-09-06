@@ -133,7 +133,7 @@ export async function signIn(
   }
 
   // 비밀번호가 일치하지 않을 경우
-  if (!(await verifyHash(c.env.ARGON2, password, userData.passwordHash))) {
+  if (!(await verifyHash(c.env.ARGON2, password, userData.passwordHash!))) {
     return {
       success: false,
       error: "Invalid credentials",

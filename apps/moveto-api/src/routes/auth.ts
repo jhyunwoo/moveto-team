@@ -6,6 +6,10 @@ import { signIn, signUp, verifyEmail } from "../controller/auth.controller";
 import { verifyEmailSchema } from "../lib/validations/verify-email";
 import { signInSchema } from "../lib/validations/sign-in";
 import { GoogleToken, GoogleUser } from "../types/google-auth";
+import { SessionController } from "../controller/session.controller";
+import initDb from "../db";
+import { and, eq } from "drizzle-orm";
+import { accountTable, userTable } from "../db/schema";
 
 const authApp = new Hono<ENV>();
 
@@ -20,6 +24,14 @@ authApp.post("/sign-up", zValidator("json", signUpSchema), async (c) => {
   return c.redirect(
     `https://www.moveto.kr/auth/verify-email/${result.verificationId}`,
   );
+});
+
+authApp.get("/session", async (c) => {
+  const session = c.var.session;
+  if (!session) {
+    return c.json({ session: null });
+  }
+  return c.json({ session: session });
 });
 
 authApp.put(
@@ -100,13 +112,46 @@ authApp.get("/callback/google", async (c) => {
       Authorization: `Bearer ${tokenData.access_token}`,
     },
   });
-  const userInfo = await res.json() as GoogleUser
+  const userInfo = (await res.json()) as GoogleUser;
   console.log(userInfo);
 
   if (!tokenData.access_token) {
     return c.text("Failed to obtain access token", 400);
   }
-  return c.text("User account created successfully.");
+
+  const db = initDb(c.env.DB);
+  const findAccount = await db.query.accountTable.findFirst({
+    where: and(
+      eq(accountTable.provider, "google"),
+      eq(accountTable.providerAccountId, userInfo.id),
+    ),
+  });
+
+  const session = new SessionController(c);
+
+  if (findAccount) {
+    await session.create(findAccount.userId);
+  } else {
+    // create new account
+    const userId = crypto.randomUUID();
+    await db
+      .insert(userTable)
+      .values({ id: userId, email: userInfo.email, name: userInfo.email });
+    await db.insert(accountTable).values({
+      userId: userId,
+      email: userInfo.email,
+      provider: "google",
+      providerAccountId: userInfo.id,
+      emailVerification: userInfo.verified_email,
+      picture: userInfo.picture,
+    });
+
+    console.log(userId);
+
+    await session.create(userId);
+  }
+
+  return c.redirect("http://localhost:3000");
 });
 
 export default authApp;
